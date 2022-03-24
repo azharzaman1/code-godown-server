@@ -34,14 +34,24 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
   const id = req.params.id || req.body.id;
 
+  const foundUser = await User.findById(id).exec();
+  if (!foundUser) {
+    res.statusMessage = "Not Found";
+    res.sendStatus(404);
+  }
+
   try {
     const updatedUser = await User.findByIdAndUpdate(id, req.body, {
       new: true,
     }).exec();
 
-    if (!updatedUser)
-      return res.status(404).json({ message: `User Not Found with ID: ${id}` });
-    res.status(201).json({ message: "User Updated", updatedUser });
+    if (!updatedUser) {
+      res.statusMessage = "Unable to update";
+      res.sendStatus(500);
+    }
+
+    res.statusMessage = "Updated";
+    res.status(201).json({ updatedUser });
   } catch (err) {
     res.statusMessage = err.message;
     res.sendStatus(500);
@@ -52,13 +62,10 @@ export const deleteUser = async (req, res) => {
   const id = req.params.id || req.body.id;
 
   const foundUser = await User.findById(id).exec();
-  if (!foundUser)
-    return res
-      .status(204)
-      .json({ message: `:( User not Found with ID: ${id}` });
+  if (!foundUser) return res.status(204).statusMessage("Not Found");
 
   try {
-    const deletedUser = await User.deleteOne({ _id: id }).exec();
+    const deletedUser = await User.findByIdAndRemove(id).exec();
 
     if (!deletedUser)
       return res

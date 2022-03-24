@@ -3,6 +3,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
+import { fileURLToPath } from "url";
+import path from "path";
 
 import { logger } from "./middlewares/logEvents.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
@@ -16,9 +18,8 @@ import refreshTokenRouter from "./routes/refreshToken.js";
 import logoutRouter from "./routes/auth/logout.js";
 import credentials from "./middlewares/credentials.js";
 import connectMongo from "./db/mongo.js";
-import { fileURLToPath } from "url";
-import path from "path";
 import snippetsRouter from "./routes/snippets.js";
+import labelsRouter from "./routes/labels.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,11 +52,11 @@ app.use("/auth/login", loginRouter);
 app.use("/auth/logout", logoutRouter);
 app.use("/api/v1/tokens/refresh", refreshTokenRouter);
 
-app.use("/api/v1/users", usersRouter);
-
 app.use(verifyJWT);
 
+app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/snippets", snippetsRouter);
+app.use("/api/v1/labels", labelsRouter);
 
 // Listening to Database
 mongoose.connection.once("open", () => {

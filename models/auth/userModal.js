@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema(
       Moderator: Number,
       Editor: Number,
     },
+    labels: [String],
     snippets: [String],
     followers: [String],
     refreshToken: String,
