@@ -61,7 +61,6 @@ export const getLabels = async (req, res) => {
 
 export const getManyLabels = async (req, res) => {
   const ids = req.body.ids;
-  console.log(req.body);
   try {
     const result = await Label.find({
       _id: { $in: ids },
