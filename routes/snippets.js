@@ -19,10 +19,22 @@ snippetsRouter.get("/", getSnippets); // everyone can hit
 
 snippetsRouter.post("/many", getManySnippets); // everyone can hit
 
-snippetsRouter.post("/", verifyRoles(userRoles.Admin), addSnippet); // only admin can hit
+snippetsRouter.post(
+  "/",
+  verifyRoles(userRoles.Admin, userRoles.User),
+  addSnippet
+); // only admin can hit
 
-snippetsRouter.put("/:id", verifyRoles(userRoles.Admin), updateSnippet); // only admin can hit
+snippetsRouter.put(
+  "/:id",
+  verifyRoles(userRoles.Admin, userRoles.User),
+  updateSnippet
+); // only admin can hit
 
-snippetsRouter.delete("/:id", verifyRoles(userRoles.Admin), deleteSnippet); // only admin can hit
+snippetsRouter.delete(
+  "/:id",
+  verifyRoles(userRoles.Admin, userRoles.User),
+  deleteSnippet
+); // only admin can hit
 
 export default snippetsRouter;

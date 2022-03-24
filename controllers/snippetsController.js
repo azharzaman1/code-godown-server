@@ -1,4 +1,51 @@
 import Snippet from "../models/snippetModal.js";
+import User from "../models/auth/userModal.js";
+
+export const addSnippet = async (req, res) => {
+  const userID = req.body.userID;
+  const snippet = req.body.snippet;
+  console.log(req.body);
+
+  try {
+    const added = await Snippet.create(snippet);
+
+    if (!added) {
+      res.statusMessage = "Unable to post";
+      return res.sendStatus(500);
+    }
+
+    console.log("Snippet Added", added);
+
+    const foundUser = await User.findById(userID).exec();
+    if (!foundUser) {
+      res.statusMessage = "Not Found";
+      res.sendStatus(404);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userID,
+      { snippets: [...foundUser.snippets, added._doc._id] },
+      {
+        new: true,
+      }
+    ).exec();
+
+    // ...foundUser.snippets, added._doc._id
+
+    if (!updatedUser) {
+      res.statusMessage = "Unable to update";
+      res.sendStatus(500);
+    }
+
+    console.log("Updated User", updatedUser);
+
+    res.statusMessage = "Added successfully";
+    res.status(201).json({ added, updatedUser });
+  } catch (err) {
+    res.statusMessage = err.message;
+    console.log(err.message);
+  }
+};
 
 export const getSnippets = async (req, res) => {
   try {
@@ -44,22 +91,6 @@ export const getSnippetById = async (req, res) => {
     }
 
     res.status(200).json({ message: `Found`, found });
-  } catch (err) {
-    res.statusMessage = err.message;
-    res.sendStatus(500);
-  }
-};
-
-export const addSnippet = async (req, res) => {
-  try {
-    const added = await Snippet.create(req.body);
-
-    if (!added) {
-      res.statusMessage = "Unable to post";
-      return res.sendStatus(500);
-    }
-    res.statusMessage = "Added successfully";
-    res.status(201).json({ added });
   } catch (err) {
     res.statusMessage = err.message;
     res.sendStatus(500);

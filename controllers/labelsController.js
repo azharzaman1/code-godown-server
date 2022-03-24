@@ -4,6 +4,7 @@ import Label from "../models/labelModal.js";
 export const addLabel = async (req, res) => {
   const userID = req.body.userID;
   const label = req.body.label;
+
   try {
     const added = await Label.create(label);
 

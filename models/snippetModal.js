@@ -3,24 +3,37 @@ import mongoose from "mongoose";
 const snippetSchema = new mongoose.Schema(
   {
     snippetName: { type: String, required: true },
-    desc: { type: String, default: "" },
-    noOfFiles: Number,
+    description: { type: String, default: "" },
+    snippetInfo: {
+      isPrivate: { type: Boolean, default: true },
+    },
     files: [
       {
-        content: { type: String, default: "// enter code here" },
-        createdAt: { type: Date, default: new Date() },
-        fileName: { type: String, required: true },
-        key: { type: Number, required: true },
-        addressString: { type: String },
         id: mongoose.ObjectId,
+        key: { type: Number, required: true },
+        fileName: { type: String, required: true },
+        snippetName: { type: String, required: true },
+        code: { type: String, required: true },
+
+        extention: String,
+        language: Object,
+
+        createdAt: { type: Date, default: new Date() },
+        addressString: { type: String },
+        content: { type: String }, // optional incase non-code file
       },
     ],
-    ownerInfo: {
-      email: { type: String, required: true },
+    owner: {
+      fullName: { type: String },
+      email: { type: String },
       userID: { type: String, required: true },
     },
+
+    tags: [{ name: String, slug: String, key: Number }],
+    labels: [{ name: String, slug: String, _id: String }],
+
     comments: [{ body: String, date: Date }],
-    forks: Array,
+    forks: [Object],
     snapshots: [
       { date: { type: Date, default: new Date() }, snapshot: Object },
     ],
@@ -36,7 +49,6 @@ const snippetSchema = new mongoose.Schema(
         userID: String,
       },
     ],
-    tags: [{ label: String, value: String }],
   },
   { timestamps: true }
 );
