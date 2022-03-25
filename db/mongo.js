@@ -3,7 +3,7 @@ import config from "../config/env.js";
 
 const connectMongo = async () => {
   try {
-    await mongoose.connect(config.LOCAL_MONGO_URL, {
+    await mongoose.connect(config.ATLAS_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

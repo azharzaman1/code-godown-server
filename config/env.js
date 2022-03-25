@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export default {
-  MONGO_URI: process.env.ATLAS_URI,
+  ATLAS_URI: process.env.ATLAS_URI,
   LOCAL_MONGO_URL: process.env.LOCAL_MONGO_URL,
   ACCESS_TOKEN_SECRET_KEY: process.env.ACCESS_TOKEN_SECRET_KEY,
   REFRESH_TOKEN_SECRET_KEY: process.env.REFRESH_TOKEN_SECRET_KEY,
