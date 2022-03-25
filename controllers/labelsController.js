@@ -13,8 +13,6 @@ export const addLabel = async (req, res) => {
       return res.sendStatus(500);
     }
 
-    console.log("Label Added", added);
-
     const foundUser = await User.findById(userID).exec();
     if (!foundUser) {
       res.statusMessage = "Not Found";
@@ -33,8 +31,6 @@ export const addLabel = async (req, res) => {
       res.statusMessage = "Unable to update";
       res.sendStatus(500);
     }
-
-    console.log("Updated User", updatedUser);
 
     res.statusMessage = "Added successfully";
     res.status(201).json({ added, updatedUser });

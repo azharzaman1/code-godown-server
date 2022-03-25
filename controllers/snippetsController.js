@@ -4,7 +4,6 @@ import User from "../models/auth/userModal.js";
 export const addSnippet = async (req, res) => {
   const userID = req.body.userID;
   const snippet = req.body.snippet;
-  console.log(req.body);
 
   try {
     const added = await Snippet.create(snippet);
@@ -13,8 +12,6 @@ export const addSnippet = async (req, res) => {
       res.statusMessage = "Unable to post";
       return res.sendStatus(500);
     }
-
-    console.log("Snippet Added", added);
 
     const foundUser = await User.findById(userID).exec();
     if (!foundUser) {
@@ -36,8 +33,6 @@ export const addSnippet = async (req, res) => {
       res.statusMessage = "Unable to update";
       res.sendStatus(500);
     }
-
-    console.log("Updated User", updatedUser);
 
     res.statusMessage = "Added successfully";
     res.status(201).json({ added, updatedUser });
