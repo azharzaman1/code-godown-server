@@ -113,22 +113,48 @@ export const updateSnippet = async (req, res) => {
 };
 
 export const deleteSnippet = async (req, res) => {
-  const id = req.params.id || req.body.id;
-  const found = await Snippet.findOne({ slug: id }).exec();
+  const id = req.params.id.split("_")[0] || req.body.id;
+  const userID = req.body.userID || req.params.id.split("_")[1];
+
+  const found = await Snippet.findById(id).exec();
   if (!found) {
     res.statusMessage = "Not Found";
     return res.sendStatus(404);
   }
+  console.log("Found");
 
   try {
-    const deleted = await Snippet.deleteOne({ slug: id }).exec();
-
+    const deleted = await Snippet.findByIdAndDelete(id).exec();
     if (!deleted) {
       res.statusMessage = "Unable to delete";
       return res.sendStatus(500);
     }
+
+    const foundUser = await User.findById(userID).exec();
+    if (!foundUser) {
+      res.statusMessage = "Not Found";
+      res.sendStatus(404);
+    }
+
+    const newSnippets = foundUser?.snippets?.filter(
+      (snippetID) => snippetID !== id
+    );
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userID,
+      {
+        snippets: newSnippets,
+      },
+      { new: true }
+    ).exec();
+
+    if (!updatedUser) {
+      res.statusMessage = "Unable to delete";
+      return res.sendStatus(500);
+    }
+
     res.statusMessage = "Deleted";
-    res.status(200).json({ deleted });
+    res.status(200).json({ deleted, snippets: updatedUser?.snippets });
   } catch (err) {
     res.statusMessage = err.message;
     res.sendStatus(500);
