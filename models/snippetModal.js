@@ -39,7 +39,7 @@ const snippetSchema = new mongoose.Schema(
     comments: [{ body: String, date: Date }],
     forks: [Object],
     snapshots: [
-      { date: { type: Date, default: new Date() }, snapshot: Object },
+      { createdAt: { type: Date, default: new Date() }, snapshot: Object },
     ],
     likes: [
       {
