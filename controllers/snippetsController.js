@@ -94,11 +94,22 @@ export const getSnippetById = async (req, res) => {
 
 export const updateSnippet = async (req, res) => {
   const id = req.params.id || req.body.id;
+  let snippet = req.body.snippet;
+
+  console.log("First", snippet);
+
+  // deleting not to update props based on type of update
+  delete snippet.labels;
+  delete snippet.tags;
+
+  console.log("Modified", snippet);
 
   try {
-    const updated = await Snippet.findOneAndUpdate({ slug: id }, req.body, {
+    const updated = await Snippet.findByIdAndUpdate(id, snippet, {
       new: true,
     }).exec();
+
+    console.log("Updated Snippet Object Response", updated);
 
     if (!updated) {
       res.statusMessage = "Not Found";

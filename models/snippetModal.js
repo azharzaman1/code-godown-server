@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const snippetSchema = new mongoose.Schema(
   {
     snippetName: { type: String, required: true },
+    slug: { type: String, required: true },
     description: { type: String, default: "" },
     snippetInfo: {
       isPrivate: { type: Boolean, default: true },
@@ -11,6 +12,9 @@ const snippetSchema = new mongoose.Schema(
       {
         id: mongoose.ObjectId,
         key: { type: Number, required: true },
+        slug: { type: String },
+        snippetUID: { type: String },
+        ownerID: { type: String },
         fileName: { type: String, required: true },
         snippetName: { type: String, required: true },
         code: { type: String, required: true },
