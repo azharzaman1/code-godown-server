@@ -27,8 +27,6 @@ export const addSnippet = async (req, res) => {
       }
     ).exec();
 
-    // ...foundUser.snippets, added._doc._id
-
     if (!updatedUser) {
       res.statusMessage = "Unable to update";
       res.sendStatus(500);
@@ -62,7 +60,7 @@ export const getManySnippets = async (req, res) => {
   try {
     const result = await Snippet.find({
       _id: { $in: ids },
-    });
+    }).sort([["updatedAt", -1]]);
 
     if (!result) {
       res.statusMessage = "Nothing Found";
@@ -96,25 +94,22 @@ export const updateSnippet = async (req, res) => {
   const id = req.params.id || req.body.id;
   let snippet = req.body.snippet;
 
-  console.log("First", snippet);
-
   // deleting not to update props based on type of update
-  delete snippet.labels;
-  delete snippet.tags;
-
-  console.log("Modified", snippet);
+  !snippet?.labels && delete snippet.labels;
+  !snippet?.tags && delete snippet.tags;
 
   try {
+    console.log("Payload", snippet);
     const updated = await Snippet.findByIdAndUpdate(id, snippet, {
       new: true,
     }).exec();
-
-    console.log("Updated Snippet Object Response", updated);
 
     if (!updated) {
       res.statusMessage = "Not Found";
       return res.sendStatus(404);
     }
+    console.log("Updated snippet", updated);
+
     res.statusMessage = "Updated";
     res.status(201).json({ updated });
   } catch (err) {
