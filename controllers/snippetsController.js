@@ -7,7 +7,6 @@ export const addSnippet = async (req, res) => {
 
   try {
     const added = await Snippet.create(snippet);
-
     if (!added) {
       res.statusMessage = "Unable to post";
       return res.sendStatus(500);
@@ -76,14 +75,16 @@ export const getManySnippets = async (req, res) => {
 
 export const getSnippetById = async (req, res) => {
   const id = req.params.id;
+  console.log("Snippet fetch id", id);
   try {
-    const found = await Snippet.findOne({ slug: id }).exec();
+    const found = await Snippet.findById(id).exec();
     if (!found) {
-      res.statusMessage = "Data Found";
+      res.statusMessage = "Data Not Found";
       return res.sendStatus(204);
     }
 
-    res.status(200).json({ message: `Found`, found });
+    res.statusMessage = "Found";
+    res.status(200).json({ found });
   } catch (err) {
     res.statusMessage = err.message;
     res.sendStatus(500);
@@ -99,7 +100,6 @@ export const updateSnippet = async (req, res) => {
   !snippet?.tags && delete snippet.tags;
 
   try {
-    console.log("Payload", snippet);
     const updated = await Snippet.findByIdAndUpdate(id, snippet, {
       new: true,
     }).exec();
@@ -108,8 +108,6 @@ export const updateSnippet = async (req, res) => {
       res.statusMessage = "Not Found";
       return res.sendStatus(404);
     }
-    console.log("Updated snippet", updated);
-
     res.statusMessage = "Updated";
     res.status(201).json({ updated });
   } catch (err) {
