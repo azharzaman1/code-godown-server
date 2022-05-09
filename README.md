@@ -1,4 +1,4 @@
-# MERN Stack Library Application (Backend)
+# MERN Stack Code Godown (Backend)
 
 **Frontend Repo**: [https://github.com/azharzaman1/library-application-client.git](https://github.com/azharzaman1/library-application-client.git)
 
