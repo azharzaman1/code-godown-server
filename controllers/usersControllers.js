@@ -19,12 +19,34 @@ export const getUserById = async (req, res) => {
   const id = req.params.id;
   try {
     const foundUser = await User.findById(id).exec();
-    if (!foundUser)
-      return res
-        .status(204)
-        .json({ message: `:( User not Found with ID: ${id}` });
+    if (!foundUser) {
+      res.statusMessage = "Data not found";
+      return res.sendStatus(204);
+    }
 
-    res.status(200).json({ message: `User Found with ID: ${id}`, foundUser });
+    res.statusMessage = "Data found";
+    res.status(200).json({ foundUser });
+  } catch (err) {
+    res.statusMessage = err.message;
+    res.sendStatus(500);
+  }
+};
+
+export const getUserByUserName = async (req, res) => {
+  const username = String(req.params.username).startsWith("@")
+    ? String(req.params.username).slice(1)
+    : req.params.username;
+
+  try {
+    const foundUser = await User.find({ username }).exec();
+    if (!foundUser) {
+      res.statusMessage = "Data not found";
+      return res.sendStatus(204);
+    }
+
+    res.statusMessage = "Data found";
+    console.log({ foundUser });
+    res.status(200).json({ foundUser });
   } catch (err) {
     res.statusMessage = err.message;
     res.sendStatus(500);

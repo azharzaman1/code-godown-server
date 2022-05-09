@@ -3,6 +3,7 @@ const usersRouter = express.Router();
 import {
   deleteUser,
   getUserById,
+  getUserByUserName,
   getUsers,
   updateUser,
 } from "../controllers/usersControllers.js";
@@ -10,9 +11,11 @@ import verifyRoles from "../middlewares/verifyRoles.js";
 import { userRoles } from "../config/userRoles.js";
 
 // Routes
-usersRouter.get("/:id", getUserById); //accessable by admin & user only
+usersRouter.get("/:id", getUserById);
 
-usersRouter.get("/", getUsers); //accessable by admin only
+usersRouter.get("/u/:username", getUserByUserName);
+
+usersRouter.get("/", verifyRoles(userRoles.Admin), getUsers); //accessable by admin only
 
 usersRouter.put("/:id", updateUser); //accessable by admin only
 

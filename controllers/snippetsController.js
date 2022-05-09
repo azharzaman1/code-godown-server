@@ -75,7 +75,6 @@ export const getManySnippets = async (req, res) => {
 
 export const getSnippetById = async (req, res) => {
   const id = req.params.id;
-  console.log("Snippet fetch id", id);
   try {
     const found = await Snippet.findById(id).exec();
     if (!found) {
@@ -83,7 +82,7 @@ export const getSnippetById = async (req, res) => {
       return res.sendStatus(204);
     }
 
-    res.statusMessage = "Found";
+    res.statusMessage = "Data Found";
     res.status(200).json({ found });
   } catch (err) {
     res.statusMessage = err.message;
