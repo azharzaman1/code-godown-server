@@ -1,4 +1,4 @@
-# Full Stack Code Godown Application [Frontend]
+# Full Stack Code Godown Application [Backend]
 Building MERN Stack Code Godown, a <b>code storing, code sharing, code Manupulating</b> platform.
 
 **Frontend Repo**: [https://github.com/azharzaman1/code-godown.git](https://github.com/azharzaman1/code-godown.git)\
