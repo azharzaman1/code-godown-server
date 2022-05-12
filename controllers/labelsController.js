@@ -112,14 +112,14 @@ export const updateLabel = async (req, res) => {
 
 export const deleteLabel = async (req, res) => {
   const id = req.params.id || req.body.id;
-  const found = await Label.findOne({ slug: id }).exec();
+  const found = await Label.findById(id).exec();
   if (!found) {
     res.statusMessage = "Not Found";
     return res.sendStatus(404);
   }
 
   try {
-    const deleted = await Label.deleteOne({ slug: id }).exec();
+    const deleted = await Label.findByIdAndDelete(id).exec();
 
     if (!deleted) {
       res.statusMessage = "Unable to delete";

@@ -29,6 +29,7 @@ const snippetSchema = new mongoose.Schema(
     ],
     owner: {
       fullName: { type: String },
+      username: { type: String },
       email: { type: String },
       userID: { type: String, required: true },
     },
