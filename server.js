@@ -20,6 +20,7 @@ import credentials from "./middlewares/credentials.js";
 import connectMongo from "./db/mongo.js";
 import snippetsRouter from "./routes/snippets.js";
 import labelsRouter from "./routes/labels.js";
+import langsRouter from "./routes/programming-langs.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,7 +53,10 @@ app.use("/auth/login", loginRouter);
 app.use("/auth/logout", logoutRouter);
 app.use("/api/v1/tokens/refresh", refreshTokenRouter);
 
-app.use(verifyJWT);
+app.use("/api/v1/public/programming-langs", langsRouter); // get snippet for logged out users
+app.use("/api/v1/public/snippets", snippetsRouter); // get snippet for logged out users
+
+app.use(verifyJWT); // [PROTECT ROUTES] will verify JWT in the headers before process below endpoints
 
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/snippets", snippetsRouter);

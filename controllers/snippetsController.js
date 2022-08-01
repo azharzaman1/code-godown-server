@@ -44,7 +44,7 @@ export const getSnippets = async (req, res) => {
     const found = await Snippet.find().exec();
     if (!found) {
       res.statusMessage = "Nothing Found";
-      return res.sendStatus(204);
+      return res.sendStatus(404);
     }
     res.statusMessage = "Data Found";
     res.status(200).json({ found });
