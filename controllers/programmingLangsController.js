@@ -2,7 +2,9 @@ import ProgrammingLang from "../models/programmingLangModal.js";
 
 const getAllProgrammingLangs = async (req, res) => {
   try {
-    const langs = await ProgrammingLang.find().exec();
+    const langs = await ProgrammingLang.find()
+      .select("_id name extensions")
+      .exec();
     if (!langs) {
       res.statusMessage = "Nothing found";
       res.sendStatus(404);
