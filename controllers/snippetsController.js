@@ -1,17 +1,22 @@
 import Snippet from "../models/snippetModal.js";
 import User from "../models/auth/userModal.js";
+import Label from "../models/labelModal.js";
+import { getSnippetsByIds } from "../middlewares/snippets/getSnippetsByIds.js";
 
 export const addSnippet = async (req, res) => {
   const userID = req.body.userID;
   const snippet = req.body.snippet;
 
   try {
+    // add snippet to db
     const added = await Snippet.create(snippet);
+
     if (!added) {
       res.statusMessage = "Unable to post";
       return res.sendStatus(500);
     }
 
+    // update snippet inside user
     const foundUser = await User.findById(userID).exec();
     if (!foundUser) {
       res.statusMessage = "Not Found";
@@ -31,9 +36,40 @@ export const addSnippet = async (req, res) => {
       res.sendStatus(500);
     }
 
+    // update snippet inside label
+
+    added.labels?.forEach(async ({ _id }) => {
+      console.log("Updating label", _id);
+      const foundLabel = await Label.findById(_id).exec();
+
+      console.log({ foundLabel });
+
+      if (!foundLabel) {
+        res.statusMessage = "Label Not Found";
+        res.sendStatus(404);
+      }
+
+      const updatedLabel = await Label.findByIdAndUpdate(
+        _id, // label id
+        { snippets: [...foundLabel?.snippets, added._doc._id] },
+        {
+          new: true,
+        }
+      ).exec();
+
+      if (!updatedLabel) {
+        res.statusMessage = "Unable to update label";
+        res.sendStatus(500);
+      }
+
+      console.log("Updated label", _id);
+    });
+
+    // send success response to client
     res.statusMessage = "Added successfully";
     res.status(201).json({ added, updatedUser });
   } catch (err) {
+    // catch and sent error to client
     res.statusMessage = err.message;
     console.log(err.message);
   }
@@ -51,6 +87,37 @@ export const getSnippets = async (req, res) => {
   } catch (err) {
     res.statusMessage = err.message;
     res.sendStatus(500);
+  }
+};
+
+export const getSnippetsByLabel = async (req, res) => {
+  const labelID = req.params.labelID;
+
+  try {
+    // fetch label and all of its associated labels
+    const labelFound = await Label.findById(labelID).exec();
+
+    if (!labelFound) {
+      // label not found in db
+      res.statusMessage = "Label not found";
+      return res.sendStatus(401);
+    }
+
+    const snippetIDs = labelFound?.snippets;
+
+    const result = await Snippet.find({
+      _id: { $in: snippetIDs },
+    }).sort([["updatedAt", -1]]);
+
+    if (!result) {
+      res.statusMessage = "Nothing Found";
+      return res.sendStatus(204);
+    }
+    res.statusMessage = "Data Found";
+    res.status(200).json({ result });
+  } catch (err) {
+    res.statusMessage = err.message;
+    return res.sendStatus(500);
   }
 };
 
@@ -119,20 +186,24 @@ export const deleteSnippet = async (req, res) => {
   const id = req.params.id.split("_")[0] || req.body.id;
   const userID = req.body.userID || req.params.id.split("_")[1];
 
-  const found = await Snippet.findById(id).exec();
-  if (!found) {
-    res.statusMessage = "Not Found";
-    return res.sendStatus(404);
-  }
-  console.log("Found");
-
   try {
+    // find snippet in db
+    const snippetFound = await Snippet.findById(id).exec();
+
+    if (!snippetFound) {
+      res.statusMessage = "Not Found";
+      return res.sendStatus(404);
+    }
+
+    // delete snippet
     const deleted = await Snippet.findByIdAndDelete(id).exec();
+
     if (!deleted) {
       res.statusMessage = "Unable to delete";
       return res.sendStatus(500);
     }
 
+    // update snippet inside user
     const foundUser = await User.findById(userID).exec();
     if (!foundUser) {
       res.statusMessage = "Not Found";
@@ -155,6 +226,32 @@ export const deleteSnippet = async (req, res) => {
       res.statusMessage = "Unable to delete";
       return res.sendStatus(500);
     }
+
+    // update snippet inside label
+    snippetFound.labels?.forEach(async ({ _id }) => {
+      console.log("Updating label", _id);
+      const foundLabel = await Label.findById(_id).exec();
+
+      if (!foundLabel) {
+        res.statusMessage = "Label Not Found";
+        res.sendStatus(404);
+      }
+
+      const updatedLabel = await Label.findByIdAndUpdate(
+        _id,
+        { snippets: foundLabel.snippets?.filter((label) => label !== id) },
+        {
+          new: true,
+        }
+      ).exec();
+
+      if (!updatedLabel) {
+        res.statusMessage = "Unable to update label";
+        res.sendStatus(500);
+      }
+
+      console.log("Updated label", _id);
+    });
 
     res.statusMessage = "Deleted";
     res.status(200).json({ deleted, snippets: updatedUser?.snippets });
