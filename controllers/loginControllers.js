@@ -50,19 +50,22 @@ export const loginUser = async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "None",
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 24 * 60 * 60 * 2,
       });
 
       foundUser.refreshToken = refreshToken;
       const updatedUser = await foundUser.save();
-      res.statusMessage = "Login Successfull";
+
       let tempUser = {
         ...{ ...updatedUser._doc }, // excluding refresh token from res
         accessToken,
       };
-      delete tempUser.refreshToken;
+
+      delete tempUser.refreshToken; // in case passed anyway
       delete tempUser.pswd;
       delete tempUser.__v;
+
+      res.statusMessage = "Login Successfull";
       res.status(202).json({
         user: tempUser,
       });

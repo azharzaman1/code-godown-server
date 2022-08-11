@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import config from "../config/env.js";
 
-const verifyJWT = async (req, res, next) => {
+const verifyJWTAccessToken = async (req, res, next) => {
   const authHeader = req.headers.authorization || req.headers.Authorization;
   if (!authHeader?.startsWith("Bearer ")) return res.sendStatus(401); // unauthorized
   const token = authHeader.split(" ")[1];
@@ -16,4 +16,4 @@ const verifyJWT = async (req, res, next) => {
   });
 };
 
-export default verifyJWT;
+export default verifyJWTAccessToken;

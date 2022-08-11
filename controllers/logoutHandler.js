@@ -9,6 +9,7 @@ export const handleLogout = async (req, res) => {
 
   // Is refreshToken in db?
   const foundUser = await User.findOne({ refreshToken }).exec();
+
   if (!foundUser) {
     res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
     res.statusMessage = "Logged out Successfully";

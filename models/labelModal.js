@@ -5,6 +5,7 @@ const labelsScheme = new mongoose.Schema(
     name: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
     userID: { type: String, required: true },
+    snippets: [String],
   },
   { timestamps: true }
 );

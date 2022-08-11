@@ -40,6 +40,8 @@ export const handleRefreshToken = async (req, res) => {
           ...{ ...foundUser._doc }, // excluding refresh token from res
           accessToken,
         };
+
+        // deleting not safe info to prevent sending to client
         delete tempUser.refreshToken;
         delete tempUser.pswd;
         delete tempUser.__v;

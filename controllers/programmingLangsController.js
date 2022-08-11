@@ -19,17 +19,13 @@ const getAllProgrammingLangs = async (req, res) => {
 };
 
 const postProgrammingLang = async (req, res) => {
-  console.log("Called");
   const language = req.body;
-  console.log(req.body);
   try {
     const posted = await ProgrammingLang.create(language);
     if (!posted) {
       res.statusMessage = "Unable to post";
       res.sendStatus(500);
     }
-
-    console.log("Posted", posted);
 
     res.sendStatus(201);
   } catch (err) {
