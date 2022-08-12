@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const labelsScheme = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    slug: { type: String, required: true, unique: true },
+    slug: { type: String, required: true },
     userID: { type: String, required: true },
     snippets: [String],
   },

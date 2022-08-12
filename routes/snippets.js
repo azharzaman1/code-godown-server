@@ -6,8 +6,10 @@ import {
   getManySnippets,
   getSnippetById,
   getSnippets,
+  getSnippetsByLabel,
   updateSnippet,
 } from "../controllers/snippetsController.js";
+import { getSnippetsByIds } from "../middlewares/snippets/getSnippetsByIds.js";
 import verifyRoles from "../middlewares/verifyRoles.js";
 const snippetsRouter = express.Router();
 
@@ -19,22 +21,24 @@ snippetsRouter.get("/", getSnippets); // everyone can hit
 
 snippetsRouter.post("/many", getManySnippets); // everyone can hit
 
+snippetsRouter.post("/f/label/:labelID", getSnippetsByLabel); // everyone can hit
+
 snippetsRouter.post(
   "/",
   verifyRoles(userRoles.Admin, userRoles.User),
   addSnippet
-); // only admin can hit
+);
 
 snippetsRouter.put(
   "/:id",
   verifyRoles(userRoles.Admin, userRoles.User),
   updateSnippet
-); // only admin can hit
+);
 
 snippetsRouter.delete(
   "/:id",
   verifyRoles(userRoles.Admin, userRoles.User),
   deleteSnippet
-); // only admin can hit
+);
 
 export default snippetsRouter;
