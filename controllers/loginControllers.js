@@ -32,7 +32,7 @@ export const loginUser = async (req, res) => {
           roles,
         },
         config.ACCESS_TOKEN_SECRET_KEY,
-        { expiresIn: "10s" }
+        { expiresIn: "100s" }
       );
 
       const refreshToken = jwt.sign(
@@ -45,12 +45,12 @@ export const loginUser = async (req, res) => {
         { expiresIn: "3d" }
       );
 
-      // sending refresh token in httpOnly cooky(no accessible with js)
+      // sending refresh token in httpOnly cooky(not accessible with js)
       res.cookie("jwt", refreshToken, {
         httpOnly: true,
         secure: true,
         sameSite: "None",
-        maxAge: 24 * 60 * 60 * 2,
+        maxAge: 24 * 60 * 60 * 1000,
       });
 
       foundUser.refreshToken = refreshToken;
